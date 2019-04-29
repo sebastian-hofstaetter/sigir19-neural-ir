@@ -1,0 +1,133 @@
+#
+# train.py configuration file
+# ----------------------------
+#
+
+expirement_base_path: "<path to main experiment result folder>"
+tqdm_disabled: False
+
+#
+# query/passage inputs (train,validate,test)
+# ------------------------------------------
+#
+preprocessed_tokenized: True
+
+#
+# training paths
+#
+train_tsv: "<path to split training files>"
+training_batch_count: xxx # as determined by the generate_file_split.sh util
+
+
+#
+# validation continued paths
+#
+
+validation_cont_tsv: "<path to split validation files>"
+validation_cont_batch_count: xxx # as determined by the generate_file_split.sh util
+validation_cont_qrels: "qrels.dev.tsv"
+
+# -1 for disabling this feature, and only run validation after every epoch
+validate_every_n_batches: 1000
+
+# validate different candidate set cutoffs (cs@N)
+validation_cont_candidate_set_from_to: [5,300]
+validation_cont_candidate_set_path: "<path to bm25 anserini output>"
+validation_cont_save_only_best: True
+
+#
+# validation at the end paths (allows for bigger query set)
+#
+validation_end_tsv: "<path to split validation files>"
+validation_end_batch_count: xx # as determined by the generate_file_split.sh util
+validation_end_qrels: "qrels.dev.tsv"
+# validate different candidate set cutoffs (cs@N)
+validation_end_candidate_set_from_to: [5,1000]
+validation_end_candidate_set_path: "<path to bm25 anserini output>"
+validation_end_save_only_best: True
+
+
+#
+# test paths
+#
+test_tsv: "<path to split test files>"
+test_batch_count: xxx # as determined by the generate_file_split.sh util
+test_qrels: "qrels.dev.tsv"
+
+test_candidate_set_max: 1000
+test_candidate_set_path: "<path to bm25 anserini output>"
+
+
+#
+# pre-trained word representation inputs (embedding layer)
+# --------------------------------------------------------
+#
+
+token_embedder_type: "embedding" # embedding,fasttext,elmo
+
+#
+# token_embedder_type = embedding 
+#
+pre_trained_embedding: "<path to pre-trained embedding (f.e. glove download)>"
+pre_trained_embedding_dim: 300
+
+vocab_directory: "<path to allennlp vocabulary>"
+train_embedding: True
+sparse_gradient_embedding: True
+
+#
+# token_embedder_type =fasttext
+#
+fasttext_vocab_mapping: "<path to fasttext vocab mapping (pre-built via preprocessing/generate_fasttext_vocab_mapping.py)>"
+fasttext_weights: "<path to fasttext weights (pre-built via preprocessing/generate_fasttext_weights.py)>"
+fasttext_max_subwords: 40
+
+#
+# token_embedder_type = elmo 
+#
+elmo_options_file: "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json"
+elmo_weights_file: "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5"
+
+#
+# trainer hyperparameters
+# -----------------------
+#
+
+model: "conv_knrm" # available: knrm, conv_knrm, match_pyramid
+optimizer: "adam" # available: sgd,adam
+embedding_optimizer: "sparse_adam"
+
+optimizer_learning_rate: 0.001
+optimizer_weight_decay: 0 #.00002
+
+embedding_optimizer_learning_rate: 0.01
+embedding_optimizer_momentum: 0 #.8 # only when using sgd
+
+# disable with factor = 1 
+learning_rate_scheduler_patience: 6 # * validate_every_n_batches = batch count to check
+learning_rate_scheduler_factor: 0.5
+
+epochs: 1
+batch_size_train: 64
+batch_size_eval: 256
+
+early_stopping_patience: 20 # * validate_every_n_batches = batch count to check
+
+#
+# per model params: specify with modelname_param: ...
+# ----------------------------------------------------
+#
+
+# max sequence lengths, disable cutting off with -1
+max_doc_length: 180
+max_query_length: 30
+
+knrm_kernels: 11
+
+conv_knrm_ngrams: 3
+conv_knrm_kernels: 11
+conv_knrm_conv_out_dim: 128 # F in the paper 
+
+match_pyramid_conv_output_size : [16,16,16,16,16] 
+match_pyramid_conv_kernel_size : [[3,3],[3,3],[3,3],[3,3],[3,3]]
+match_pyramid_adaptive_pooling_size: [[36,90],[18,60],[9,30],[6,20],[3,10]]
