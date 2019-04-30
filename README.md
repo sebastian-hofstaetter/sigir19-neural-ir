@@ -8,7 +8,7 @@ We observe that despite the significant benefits of using larger vocabularies, t
 
 ![](figure-1.png)
 
-**Get the full paper here: <arxiv link>**
+**Get the full paper here: http://arxiv.org/abs/1904.12683**
 
 **Please cite the paper:**
 
@@ -21,6 +21,8 @@ We observe that despite the significant benefits of using larger vocabularies, t
     publisher = {ACM}
 }
 ```
+
+*If you have any questions or suggestions, please feel free to open an issue or write an email to Sebastian (email in the paper). Of course we are also open future collaborations in the field of neural IR *
 
 ## Implemented models
 
